@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const { promisify } = require('util');
+const { collectDefaultMetrics, Registry, Counter, Histogram } = require('@prometheus-io/client');
 const scrypt = promisify(crypto.scrypt);
 
 const app = express();
@@ -33,6 +34,40 @@ const imageUpload = multer({
     }
     callback(null, true);
   }
+});
+
+const metricsRegistry = new Registry();
+collectDefaultMetrics({ register: metricsRegistry });
+
+const httpRequestsTotal = new Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'route', 'status'],
+  registers: [metricsRegistry]
+});
+
+const httpRequestDurationSeconds = new Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status'],
+  buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+  registers: [metricsRegistry]
+});
+
+app.use((req, res, next) => {
+  const startTime = Date.now();
+  res.on('finish', () => {
+    const durationSeconds = (Date.now() - startTime) / 1000;
+    const route = req.route?.path || req.path || 'unknown';
+    httpRequestsTotal.inc({ method: req.method, route, status: String(res.statusCode) });
+    httpRequestDurationSeconds.observe({ method: req.method, route, status: String(res.statusCode) }, durationSeconds);
+  });
+  next();
+});
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', metricsRegistry.contentType);
+  res.end(await metricsRegistry.metrics());
 });
 
 app.use(express.json());
