@@ -4,3 +4,5 @@ blog.db
 blog.db.backup
 uploads/*
 !uploads/.gitkeep
+/report-assets/
+/Bao_cao_tong_hop_DTC245200325.docx

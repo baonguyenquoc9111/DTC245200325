@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const { promisify } = require('util');
-const { collectDefaultMetrics, Registry, Counter, Histogram } = require('@prometheus-io/client');
+const { collectDefaultMetrics, Registry, Counter, Gauge, Histogram } = require('@prometheus-io/client');
 const scrypt = promisify(crypto.scrypt);
 
 const app = express();
@@ -51,6 +51,12 @@ const httpRequestDurationSeconds = new Histogram({
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'route', 'status'],
   buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+  registers: [metricsRegistry]
+});
+
+const databaseAvailability = new Gauge({
+  name: 'blog_database_up',
+  help: 'Whether the blog application can reach MySQL',
   registers: [metricsRegistry]
 });
 
@@ -347,6 +353,16 @@ app.post('/api/register', (req, res) => {
 
 const port = Number(process.env.PORT || 3000);
 initializeDatabase().then(() => {
+  databaseAvailability.set(1);
+  const databaseHealthCheck = setInterval(async () => {
+    try {
+      await dbPool.query('SELECT 1');
+      databaseAvailability.set(1);
+    } catch {
+      databaseAvailability.set(0);
+    }
+  }, 15000);
+  databaseHealthCheck.unref();
   app.listen(port, '0.0.0.0', () => console.log(`Hệ thống Blog đang chạy tại http://localhost:${port}`));
 }).catch(error => {
   console.error('Lỗi khởi tạo MySQL:', error.message);
