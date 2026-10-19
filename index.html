@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Nhỏ - Blog cá nhân</title>
+    <meta name="description" content="Góc Nhỏ - những ghi chép về công nghệ, đời sống và hành trình học hỏi mỗi ngày.">
+    <meta name="theme-color" content="#20352e">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Góc Nhỏ - Blog cá nhân">
+    <meta property="og:description" content="Những ghi chép về công nghệ, đời sống và hành trình học hỏi mỗi ngày.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=85">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ink: #20352e;
+            --muted: #718078;
+            --accent: #c45d3e;
+            --paper: #f5f3ed;
+            --surface: #fffefa;
+            --line: #e6e3da;
+            --forest: #20352e;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); }
+        .app-navbar { background: var(--forest); padding: 14px max(24px, calc((100vw - 1240px) / 2)); }
+        .app-brand { color: white; text-decoration: none; font: 700 1.15rem 'Playfair Display', serif; letter-spacing: 0; }
+        .brand-mark { color: #e6a080; }
+        .sys-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+        .form-control, .form-select { border-radius: 5px; padding: 10px 13px; border: 1px solid #d8d8ce; font-size: .94rem; }
+        .form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196, 93, 62, .12); }
+        .btn-system { background: var(--accent); color: white; font-weight: 700; border-radius: 5px; padding: 10px 20px; border: 0; }
+        .btn-system:hover { background: #a94932; color: white; }
+        .blog-hero { min-height: 260px; background: var(--forest); color: white; overflow: hidden; position: relative; }
+        .blog-hero::after { content: ''; position: absolute; inset: 0 0 0 48%; background: linear-gradient(90deg, var(--forest), transparent 45%), url('https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=85') center 46% / cover; opacity: .78; }
+        .hero-content { position: relative; z-index: 1; max-width: 1240px; margin: auto; padding: 48px 24px; }
+        .hero-kicker { color: #e6a080; text-transform: uppercase; font-size: .75rem; letter-spacing: .12em; font-weight: 700; }
+        .hero-title { max-width: 560px; font: 600 clamp(2.4rem, 5vw, 4rem)/1.08 'Playfair Display', serif; letter-spacing: 0; }
+        .hero-copy { color: #d6dfd9; max-width: 460px; }
+        .stat-widget { background: transparent; border-bottom: 1px solid var(--line); padding: 14px 0; margin-bottom: 18px; }
+        .post-box { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; transition: border-color .2s, transform .2s, box-shadow .2s; }
+        .post-box:hover { border-color: #c7b9a9; box-shadow: 0 10px 24px rgba(32, 53, 46, .07); transform: translateY(-2px); }
+        .post-title { font: 600 1.55rem/1.25 'Playfair Display', serif; letter-spacing: 0; }
+        .post-content { color: #4e5e56; line-height: 1.75; white-space: pre-line; }
+        .category-pill { cursor: pointer; transition: background .2s, color .2s; white-space: nowrap; }
+        .category-pill.active { background: var(--forest) !important; color: white !important; border-color: var(--forest) !important; }
+        .category-pill:not(.active):hover { background: #ede9df !important; }
+        .category-tag { color: #a94932; background: #f8e9e1; border-radius: 3px; font-size: .75rem; font-weight: 700; }
+        .post-meta, .eyebrow { color: var(--muted); font-size: .82rem; }
+        .cover-preview { max-height: 220px; width: 100%; object-fit: cover; border-radius: 5px; }
+        .bookmark-btn { color: var(--accent); }
+        .comment-area { background: #f7f5ef; border-radius: 5px; }
+        .feed-heading { font: 600 1.8rem 'Playfair Display', serif; letter-spacing: 0; }
+        .section-label { color: var(--accent); font-weight: 700; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+        @media (max-width: 575.98px) {
+            .app-navbar { padding: 12px 16px; }
+            .blog-hero { min-height: 240px; }
+            .blog-hero::after { inset: 0; opacity: .35; }
+            .hero-content { padding: 36px 20px; }
+            .hero-title { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header hệ thống -->
+    <nav class="navbar app-navbar navbar-dark d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a href="/" class="app-brand"><span class="brand-mark">✳</span> Góc Nhỏ</a>
+        </div>
+        <div id="auth-section">
+            <button onclick="showModal('loginModal')" class="btn btn-outline-light btn-sm px-3 fw-semibold"><i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập</button>
+            <button onclick="showModal('registerModal')" class="btn btn-info btn-sm px-3 fw-semibold text-white ms-2"><i class="fa-solid fa-user-plus me-1"></i> Đăng ký</button>
+        </div>
+    </nav>
+
+    <header class="blog-hero">
+        <div class="hero-content">
+            <div class="hero-kicker mb-3">Một góc để đọc và viết</div>
+            <h1 class="hero-title mb-3">Ý tưởng nhỏ,<br>câu chuyện dài.</h1>
+            <p class="hero-copy mb-0">Những ghi chép về công nghệ, đời sống và hành trình học hỏi mỗi ngày.</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container my-4">
+        <div class="row g-4">
+            <!-- Cột Trái: Form Viết bài (Hiển thị cho CẢ ADMIN LẪN USER đã đăng nhập) -->
+            <div class="col-lg-4" id="user-panel" style="display: none;">
+                <!-- Form Viết Bài / Tạo Blog -->
+                <div class="sys-card p-4 mb-4">
+                    <h6 class="fw-bold text-uppercase text-secondary mb-3 fs-6 border-bottom pb-2"><i class="fa-solid fa-pen-nib text-primary me-2"></i>CMS / Trình soạn thảo</h6>
+                    <input type="hidden" id="post-id">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Tiêu đề bài viết</label>
+                        <input type="text" id="title" class="form-control" placeholder="Nhập tiêu đề...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Phân loại danh mục</label>
+                        <select id="category-select" class="form-select"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cover-image" class="form-label fw-semibold small text-muted">Ảnh bìa</label>
+                        <input type="file" id="cover-image" class="form-control" accept="image/jpeg,image/png,image/webp" onchange="previewCoverImage()">
+                        <input type="hidden" id="cover-image-url">
+                        <img id="cover-preview" class="cover-preview d-none mt-2" alt="Xem trước ảnh bìa">
+                        <button type="button" id="clear-cover" class="btn btn-link btn-sm text-danger px-0 d-none" onclick="clearCoverImage()">Xóa ảnh bìa</button>
+                        <div class="form-text">JPEG, PNG hoặc WebP, tối đa 5 MB.</div>
+                        <div id="cover-upload-status" class="small mt-1" role="status" aria-live="polite"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Nội dung chi tiết</label>
+                        <textarea id="content" class="form-control" rows="5" placeholder="Nhập nội dung bài viết..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Trạng thái</label>
+                        <select id="post-status" class="form-select">
+                            <option value="published">Xuất bản</option>
+                            <option value="draft">Lưu bản nháp</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button onclick="savePost()" id="btn-save" class="btn btn-system">Xuất bản bài viết</button>
+                        <button onclick="resetForm()" id="btn-cancel" class="btn btn-light border d-none">Hủy thao tác</button>
+                    </div>
+                </div>
+
+                <!-- Form Quản lý Danh mục (Chỉ Admin mới thấy) -->
+                <div class="sys-card p-4" id="admin-category-box" style="display: none;">
+                    <h6 class="fw-bold text-uppercase text-secondary mb-3 fs-6 border-bottom pb-2"><i class="fa-solid fa-folder-plus text-success me-2"></i>Quản lý Danh mục (Admin)</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" id="new-cat-name" class="form-control form-control-sm" placeholder="Tên danh mục mới...">
+                        <button onclick="addCategory()" class="btn btn-success btn-sm">Thêm</button>
+                    </div>
+                    <div id="admin-category-list" class="d-flex flex-wrap gap-1"></div>
+                </div>
+            </div>
+
+            <!-- Cột Phải: Bảng tin & Trạng thái hệ thống -->
+            <div class="col-lg-12" id="main-content-area">
+                
+                <!-- Thống kê nhanh trạng thái hệ thống -->
+                <div class="stat-widget d-flex justify-content-between align-items-center shadow-sm">
+                    <div>
+                        <h6 class="fw-bold m-0 mb-1">Bài viết mới nhất</h6>
+                        <span class="small text-muted">Chọn một chủ đề và dành ít phút để đọc.</span>
+                    </div>
+                    <div class="text-end">
+                        <span id="stat-post-badge" class="eyebrow">0 bài viết</span>
+                    </div>
+                </div>
+
+                <!-- Thanh lọc theo danh mục -->
+                <div class="sys-card p-3 mb-3 d-flex align-items-center gap-2 overflow-auto" id="filter-categories">
+                    <span class="badge bg-dark category-pill active px-3 py-2" onclick="filterByCategory('')">Tất cả</span>
+                </div>
+
+                <div class="sys-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 flex-wrap gap-3">
+                        <div>
+                            <div class="section-label mb-1">Từ trang viết</div>
+                            <h2 class="feed-heading m-0">Bài viết</h2>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <div class="input-group input-group-sm" style="width: min(100%, 260px);">
+                                <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input type="search" id="search-input" class="form-control" placeholder="Tìm bài viết..." oninput="handleSearch()" aria-label="Tìm bài viết">
+                            </div>
+                            <select id="sort-select" class="form-select form-select-sm" style="width: 160px;" onchange="fetchPosts()" aria-label="Sắp xếp bài viết">
+                                <option value="newest">Mới nhất</option>
+                                <option value="oldest">Cũ nhất</option>
+                            </select>
+                            <button id="saved-filter" class="btn btn-sm btn-outline-secondary" type="button" onclick="toggleSavedFilter()" aria-label="Chỉ xem bài đã lưu" aria-pressed="false" title="Chỉ xem bài đã lưu"><i class="fa-regular fa-bookmark" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div id="posts-list">
+                            <div class="text-center text-muted py-5">Đang tải bài viết...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Đăng nhập -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 border-0 shadow-lg rounded-3">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold text-dark"><i class="fa-solid fa-right-to-bracket me-2 text-primary"></i>Đăng nhập hệ thống</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label for="login-user" class="form-label small fw-semibold">Tài khoản</label><input type="text" id="login-user" class="form-control" placeholder="admin hoặc user..." autocomplete="username" required></div>
+                    <div class="mb-3"><label for="login-pass" class="form-label small fw-semibold">Mật khẩu</label><input type="password" id="login-pass" class="form-control" placeholder="Mật khẩu..." autocomplete="current-password" required></div>
+                    <button onclick="login()" class="btn btn-system w-100 py-2 mb-3">Xác thực đăng nhập</button>
+                    <div class="text-center small text-muted">
+                        Chưa có tài khoản? <a href="#" onclick="switchToRegister()" class="text-decoration-none fw-semibold">Đăng ký ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Đăng ký -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 border-0 shadow-lg rounded-3">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold text-dark"><i class="fa-solid fa-user-plus me-2 text-info"></i>Đăng ký tài khoản người dùng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label for="reg-user" class="form-label small fw-semibold">Tài khoản mới</label><input type="text" id="reg-user" class="form-control" autocomplete="username" required></div>
+                    <div class="mb-3"><label for="reg-pass" class="form-label small fw-semibold">Mật khẩu</label><input type="password" id="reg-pass" class="form-control" autocomplete="new-password" required></div>
+                    <button onclick="register()" class="btn btn-info text-white w-100 py-2 fw-semibold mb-3">Đăng ký tài khoản</button>
+                    <div class="text-center small text-muted">
+                        Đã có tài khoản? <a href="#" onclick="switchToLogin()" class="text-decoration-none fw-semibold">Đăng nhập</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUser = null;
+        let authToken = sessionStorage.getItem('blogAuthToken') || '';
+        let selectedCategory = '';
+        let searchQuery = '';
+        let showSavedOnly = false;
+        let savedPosts = new Set(JSON.parse(localStorage.getItem('savedPosts') || '[]').map(Number));
+        let coverPreviewObjectUrl = '';
+
+        async function init() {
+            await restoreSession();
+            await fetchCategories();
+            await fetchPosts();
+        }
+
+        async function restoreSession() {
+            if (!authToken) return;
+            try {
+                const res = await fetch('/api/me', { headers: { Authorization: `Bearer ${authToken}` } });
+                if (!res.ok) throw new Error('Session expired');
+                const data = await res.json();
+                currentUser = data.user;
+                updateUI();
+            } catch (error) {
+                if (error.message === 'Session expired') {
+                    authToken = '';
+                    sessionStorage.removeItem('blogAuthToken');
+                }
+            }
+        }
+
+        function apiFetch(url, options = {}) {
+            const headers = { ...(options.headers || {}) };
+            if (authToken) headers.Authorization = `Bearer ${authToken}`;
+            return fetch(url, { ...options, headers });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[character]);
+        }
+
+        function safeImageUrl(value) {
+            try {
+                const url = new URL(value, window.location.origin);
+                return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+            } catch {
+                return '';
+            }
+        }
+
+        function setCoverPreview(source) {
+            const preview = document.getElementById('cover-preview');
+            const clearButton = document.getElementById('clear-cover');
+            preview.src = source;
+            preview.classList.remove('d-none');
+            clearButton.classList.remove('d-none');
+        }
+
+        function previewCoverImage() {
+            const input = document.getElementById('cover-image');
+            const file = input.files[0];
+            const message = document.getElementById('cover-upload-status');
+            if (!file) return;
+            if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+                input.value = '';
+                message.className = 'small mt-1 text-danger';
+                message.innerText = file.size > 5 * 1024 * 1024 ? 'Ảnh vượt quá giới hạn 5 MB.' : 'Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP.';
+                return;
+            }
+            message.innerText = '';
+            if (coverPreviewObjectUrl) URL.revokeObjectURL(coverPreviewObjectUrl);
+            coverPreviewObjectUrl = URL.createObjectURL(file);
+            setCoverPreview(coverPreviewObjectUrl);
+        }
+
+        function clearCoverImage() {
+            document.getElementById('cover-image').value = '';
+            document.getElementById('cover-image-url').value = '';
+            document.getElementById('cover-upload-status').innerText = '';
+            document.getElementById('cover-preview').classList.add('d-none');
+            document.getElementById('cover-preview').removeAttribute('src');
+            document.getElementById('clear-cover').classList.add('d-none');
+            if (coverPreviewObjectUrl) URL.revokeObjectURL(coverPreviewObjectUrl);
+            coverPreviewObjectUrl = '';
+        }
+
+        async function fetchCategories() {
+            let categories;
+            try {
+                const res = await apiFetch('/api/categories');
+                if (!res.ok) throw new Error('Category request failed');
+                categories = await res.json();
+            } catch {
+                document.getElementById('filter-categories').innerHTML = '<span class="small text-muted">Danh mục sẽ tải khi kết nối máy chủ.</span>';
+                return;
+            }
+            
+            const catSelect = document.getElementById('category-select');
+            if (catSelect) {
+                catSelect.innerHTML = categories.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+            }
+            
+            let filterHtml = `<span class="badge bg-dark category-pill ${selectedCategory === '' ? 'active' : ''} px-3 py-2" onclick="filterByCategory('')">Tất cả</span>`;
+            filterHtml += categories.map(c => `<span class="badge bg-light text-dark border category-pill ${selectedCategory == c.id ? 'active' : ''} px-3 py-2" onclick="filterByCategory(${c.id})">${escapeHtml(c.name)}</span>`).join('');
+            document.getElementById('filter-categories').innerHTML = filterHtml;
+
+            const adminCatList = document.getElementById('admin-category-list');
+            if (currentUser && currentUser.role === 'admin' && adminCatList) {
+                adminCatList.innerHTML = categories.map(c => `
+                    <span class="badge bg-secondary d-flex align-items-center gap-2 p-2">
+                        ${escapeHtml(c.name)} <i class="fa-solid fa-xmark text-white" style="cursor:pointer;" onclick="deleteCategory(${c.id})"></i>
+                    </span>
+                `).join('');
+            }
+        }
+
+        async function fetchPosts() {
+            let url = '/api/posts?';
+            if (searchQuery) url += `search=${encodeURIComponent(searchQuery)}&`;
+            if (selectedCategory) url += `category=${selectedCategory}`;
+
+            const listDiv = document.getElementById('posts-list');
+            let res;
+            try {
+                res = await apiFetch(url);
+            } catch {
+                listDiv.innerHTML = '<div class="text-center py-5" role="status"><i class="fa-solid fa-cloud-arrow-down mb-2"></i><p class="mb-0">Không kết nối được máy chủ. Hãy chạy lại blog rồi làm mới trang.</p></div>';
+                return;
+            }
+            let posts = await res.json();
+            if (!res.ok) {
+                listDiv.innerHTML = `<div class="alert alert-danger">${escapeHtml(posts.error || 'Không thể tải bài viết.')}</div>`;
+                return;
+            }
+            const sortOrder = document.getElementById('sort-select').value;
+            posts.sort((a, b) => sortOrder === 'oldest'
+                ? new Date(a.created_at) - new Date(b.created_at)
+                : new Date(b.created_at) - new Date(a.created_at));
+            if (showSavedOnly) posts = posts.filter(post => savedPosts.has(Number(post.id)));
+            document.getElementById('stat-post-badge').innerText = `${posts.length} bài viết`;
+            if (posts.length === 0) {
+                listDiv.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fa-regular fa-pen-to-square text-secondary fs-1 mb-3 opacity-25"></i>
+                        <h6 class="text-muted">${showSavedOnly ? 'Bạn chưa lưu bài viết nào.' : 'Chưa có bài viết phù hợp.'}</h6>
+                    </div>`;
+                return;
+            }
+
+            let html = '<div class="row g-3">';
+            for (let p of posts) {
+                let comments = [];
+                let commentsError = '';
+                try {
+                    const cRes = await apiFetch(`/api/posts/${p.id}/comments`);
+                    const commentData = await cRes.json();
+                    if (!cRes.ok || !Array.isArray(commentData)) throw new Error(commentData.error || 'Không tải được thảo luận.');
+                    comments = commentData;
+                } catch (error) {
+                    commentsError = error.message || 'Không tải được thảo luận.';
+                }
+                const readingMinutes = Math.max(1, Math.ceil(String(p.content).trim().split(/\s+/).length / 200));
+                const isSaved = savedPosts.has(Number(p.id));
+                const coverImage = safeImageUrl(p.cover_image);
+
+                html += `
+                    <div class="col-md-12">
+                        <div class="post-box p-4">
+                            ${coverImage ? `<img src="${escapeHtml(coverImage)}" alt="Ảnh bìa: ${escapeHtml(p.title)}" class="img-fluid w-100 mb-3" style="max-height: 340px; object-fit: cover; border-radius: 5px;">` : ''}
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <span class="category-tag d-inline-block mb-2 px-2 py-1">${escapeHtml(p.category_name || 'Chung')}</span>
+                                    ${p.status === 'draft' ? '<span class="badge bg-warning text-dark ms-1">Bản nháp</span>' : ''}
+                                    <h3 class="post-title mb-1">${escapeHtml(p.title)}</h3>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button onclick="toggleSavedPost(${p.id})" class="btn btn-sm btn-outline-secondary bookmark-btn" aria-label="${isSaved ? 'Bỏ lưu bài viết' : 'Lưu bài viết'}" title="${isSaved ? 'Bỏ lưu' : 'Lưu bài viết'}"><i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark"></i></button>
+                                    ${currentUser && currentUser.role === 'admin' ? `
+                                        <div class="btn-group">
+                                            <button data-edit-id="${p.id}" class="btn btn-outline-secondary btn-sm" aria-label="Sửa bài viết"><i class="fa-solid fa-pen"></i></button>
+                                            <button onclick="deletePost(${p.id})" class="btn btn-outline-danger btn-sm" aria-label="Xóa bài viết"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <p class="post-content mb-3">${escapeHtml(p.content)}</p>
+                            <div class="post-meta"><i class="fa-regular fa-calendar me-1"></i>${new Date(p.created_at).toLocaleDateString('vi-VN')} <span class="mx-2">·</span><i class="fa-regular fa-clock me-1"></i>${readingMinutes} phút đọc${p.author ? ` <span class="mx-2">·</span>${escapeHtml(p.author)}` : ''}</div>
+                            
+                            <!-- Thảo luận cộng đồng -->
+                            <div class="comment-area mt-3 pt-3 p-3">
+                                <span class="fw-bold small text-muted d-block mb-2">Thảo luận (${comments.length})</span>
+                                <div class="mb-2">
+                                    ${commentsError ? `<span class="text-danger small">${escapeHtml(commentsError)}</span>` : comments.length === 0 ? '<span class="text-muted small italic">Chưa có thảo luận nào.</span>' : comments.map(c => `
+                                        <div class="bg-white p-2 rounded border mb-1 small">
+                                            <span class="fw-semibold text-primary">${escapeHtml(c.username)}:</span> ${escapeHtml(c.content)}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ${currentUser ? `
+                                    <div class="input-group input-group-sm mt-2">
+                                        <input type="text" id="comment-input-${p.id}" class="form-control" placeholder="Viết phản hồi...">
+                                        <button onclick="addComment(${p.id})" class="btn btn-dark">Gửi</button>
+                                    </div>
+                                    <div id="comment-status-${p.id}" class="small mt-2" role="status" aria-live="polite"></div>
+                                ` : '<span class="text-danger small italic font-monospace">Đăng nhập để tham gia thảo luận.</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            listDiv.innerHTML = html;
+            listDiv.querySelectorAll('[data-edit-id]').forEach(button => {
+                const post = posts.find(item => Number(item.id) === Number(button.dataset.editId));
+                button.addEventListener('click', () => editPost(post.id, post.title, post.content, post.category_id, post.status, post.cover_image));
+            });
+        }
+
+        function toggleSavedPost(postId) {
+            const id = Number(postId);
+            if (savedPosts.has(id)) savedPosts.delete(id);
+            else savedPosts.add(id);
+            localStorage.setItem('savedPosts', JSON.stringify([...savedPosts]));
+            fetchPosts();
+        }
+
+        function toggleSavedFilter() {
+            showSavedOnly = !showSavedOnly;
+            const button = document.getElementById('saved-filter');
+            button.classList.toggle('active', showSavedOnly);
+            button.setAttribute('aria-pressed', String(showSavedOnly));
+            button.title = showSavedOnly ? 'Hiện tất cả bài viết' : 'Chỉ xem bài đã lưu';
+            fetchPosts();
+        }
+
+        function filterByCategory(catId) {
+            selectedCategory = catId;
+            fetchCategories();
+            fetchPosts();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            fetchPosts();
+        }
+
+        async function addCategory() {
+            const name = document.getElementById('new-cat-name').value;
+            if (!name) return alert('Nhập tên danh mục!');
+            const res = await apiFetch('/api/categories', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            if (res.ok) {
+                document.getElementById('new-cat-name').value = '';
+                fetchCategories();
+            } else { alert('Danh mục đã tồn tại hoặc lỗi!'); }
+        }
+
+        async function deleteCategory(id) {
+            if (confirm('Xóa danh mục này?')) {
+                await apiFetch(`/api/categories/${id}`, { method: 'DELETE' });
+                fetchCategories();
+            }
+        }
+
+        function showModal(modalId) { new bootstrap.Modal(document.getElementById(modalId)).show(); }
+        function switchToRegister() { bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide(); showModal('registerModal'); }
+        function switchToLogin() { bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide(); showModal('loginModal'); }
+
+        async function login() {
+            const username = document.getElementById('login-user').value;
+            const password = document.getElementById('login-pass').value;
+            let res;
+            try {
+                res = await fetch('/api/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+            } catch {
+                return alert('Không kết nối được máy chủ. Hãy chạy lại blog rồi thử lại.');
+            }
+            if (res.ok) {
+                const data = await res.json();
+                currentUser = data.user;
+                authToken = data.token;
+                sessionStorage.setItem('blogAuthToken', authToken);
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                updateUI();
+                fetchCategories();
+                fetchPosts();
+            } else {
+                const error = await res.json();
+                alert(error.error || 'Không thể đăng nhập!');
+            }
+        }
+
+        async function register() {
+            const username = document.getElementById('reg-user').value;
+            const password = document.getElementById('reg-pass').value;
+            const res = await fetch('/api/register', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            if (res.ok) {
+                alert('Đăng ký thành công! Hãy đăng nhập.');
+                switchToLogin();
+            } else { const err = await res.json(); alert(err.error); }
+        }
+
+        async function logout() {
+            if (authToken) await apiFetch('/api/logout', { method: 'POST' });
+            authToken = '';
+            sessionStorage.removeItem('blogAuthToken');
+            currentUser = null;
+            updateUI();
+            fetchCategories();
+            fetchPosts();
+        }
+
+        function updateUI() {
+            const authSec = document.getElementById('auth-section');
+            const userPanel = document.getElementById('user-panel');
+            const adminCatBox = document.getElementById('admin-category-box');
+            const mainArea = document.getElementById('main-content-area');
+
+            if (currentUser) {
+                authSec.innerHTML = `<span class="text-light me-3 small">Xin chào, <b>${escapeHtml(currentUser.username)}</b></span><button onclick="logout()" class="btn btn-outline-light btn-sm">Đăng xuất</button>`;
+                
+                // Cả User và Admin đều hiện khung Viết bài ở cột trái
+                userPanel.style.display = 'block';
+                mainArea.className = 'col-lg-8';
+
+                // Chỉ Admin mới thấy khung Quản lý danh mục bên dưới
+                if (currentUser.role === 'admin') {
+                    adminCatBox.style.display = 'block';
+                } else {
+                    adminCatBox.style.display = 'none';
+                }
+            } else {
+                authSec.innerHTML = `<button onclick="showModal('loginModal')" class="btn btn-outline-light btn-sm px-3 fw-semibold"><i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập</button><button onclick="showModal('registerModal')" class="btn btn-info btn-sm px-3 fw-semibold text-white ms-2"><i class="fa-solid fa-user-plus me-1"></i> Đăng ký</button>`;
+                userPanel.style.display = 'none';
+                mainArea.className = 'col-lg-12';
+            }
+        }
+
+        async function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const status = document.getElementById(`comment-status-${postId}`);
+            const content = input.value.trim();
+            if (!content) {
+                status.className = 'small mt-2 text-danger';
+                status.innerText = 'Hãy nhập nội dung trước khi gửi.';
+                input.focus();
+                return;
+            }
+
+            const button = input.nextElementSibling;
+            button.disabled = true;
+            status.className = 'small mt-2 text-muted';
+            status.innerText = 'Đang gửi...';
+            try {
+                const res = await apiFetch(`/api/posts/${postId}/comments`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Không thể gửi bình luận.');
+                input.value = '';
+                await fetchPosts();
+            } catch (error) {
+                status.className = 'small mt-2 text-danger';
+                status.innerText = error.message || 'Không thể kết nối máy chủ.';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function savePost() {
+            const id = document.getElementById('post-id').value;
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const category_id = document.getElementById('category-select').value;
+            const status = document.getElementById('post-status').value;
+            let cover_image = document.getElementById('cover-image-url').value;
+            if (!title || !content) return alert('Vui lòng nhập đủ thông tin!');
+            const coverFile = document.getElementById('cover-image').files[0];
+            if (coverFile) {
+                const formData = new FormData();
+                formData.append('image', coverFile);
+                let uploadRes;
+                try {
+                    uploadRes = await apiFetch('/api/uploads', { method: 'POST', body: formData });
+                } catch {
+                    return alert('Không kết nối được máy chủ để tải ảnh lên.');
+                }
+                const uploadData = await uploadRes.json();
+                if (!uploadRes.ok) return alert(uploadData.error || 'Không thể tải ảnh lên!');
+                cover_image = uploadData.url;
+            }
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/posts/${id}` : '/api/posts';
+            const res = await apiFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, content, category_id, status, cover_image }) });
+            if (!res.ok) {
+                const error = await res.json();
+                return alert(error.error || 'Không thể lưu bài viết!');
+            }
+            resetForm();
+            fetchPosts();
+        }
+
+        function editPost(id, title, content, category_id, status = 'published', coverImage = '') {
+            document.getElementById('post-id').value = id;
+            document.getElementById('title').value = title;
+            document.getElementById('content').value = content;
+            document.getElementById('category-select').value = category_id;
+            document.getElementById('post-status').value = status;
+            document.getElementById('cover-image').value = '';
+            document.getElementById('cover-image-url').value = coverImage || '';
+            document.getElementById('cover-upload-status').innerText = '';
+            if (coverPreviewObjectUrl) URL.revokeObjectURL(coverPreviewObjectUrl);
+            coverPreviewObjectUrl = '';
+            if (coverImage) setCoverPreview(safeImageUrl(coverImage));
+            else clearCoverImage();
+            document.getElementById('btn-save').innerText = 'Lưu thay đổi';
+            document.getElementById('btn-cancel').classList.remove('d-none');
+        }
+
+        function resetForm() {
+            document.getElementById('post-id').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            clearCoverImage();
+            document.getElementById('post-status').value = 'published';
+            document.getElementById('btn-save').innerText = 'Xuất bản bài viết';
+            document.getElementById('btn-cancel').classList.add('d-none');
+        }
+
+        async function deletePost(id) {
+            if (confirm('Xác nhận xóa bản ghi bài viết này khỏi CSDL?')) {
+                await apiFetch(`/api/posts/${id}`, { method: 'DELETE' });
+                fetchPosts();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

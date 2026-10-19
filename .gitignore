@@ -1,0 +1,6 @@
+node_modules/
+.env
+blog.db
+blog.db.backup
+uploads/*
+!uploads/.gitkeep
